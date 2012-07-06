@@ -1,63 +1,67 @@
-<!DOCTYPE html>
-<html>
+<?php
+
+// Autoloader. Use SPL in a real project.
+foreach(array('Server', 'Stats', 'StatsException') as $file) {
+	include sprintf('../JoelLarson/Minecraft/%s.php', $file);
+}
+
+$servers = array(
+	"s.nerd.nu",
+	"p.nerd.nu",
+	"hardcore.hcsmp.com",
+	"theverge.game.nfoservers.com:25565",
+);
+
+?><!DOCTYPE html>
+<html lang="en">
 <head>
+	<meta charset="UTF-8" />
 	<title>Minecraft Server Status</title>
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<style>
-		tr td, tr th { text-align: center !important; }
-		tr td.motd, tr th.motd { text-align: left !important; }
-	</style>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+	<style>tr td,tr th {text-align:center !important}tr td.motd,tr th.motd{text-align:left !important;}</style>
+	<style>.status{width:50px;}</style>
 	<!-- HTML5 shim -->
     <!--[if lt IE 9]>
     	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 </head>
-
-
-<body style="width: 700px; margin: 30px auto;">
-
-
-<div>
-	<table class="table table-bordered table-striped">
-		<thead>
-			<tr> <th>Status</th> <th class='motd'>Server</th> <th>Players</th> </tr>
-		</thead>
-		<tbody>
-
-			<?php
-				include "../MCServerStatus.php";
-				$servers = array(
-					"s.nerd.nu",
-					"p.nerd.nu",
-					"hardcore.hcsmp.com",
-					"theverge.game.nfoservers.com:25565"
-				);
-				foreach ($servers as $server) {
-					if (strpos($server, ':') !== false) {
-						$parts = explode(':', $server);
-						$port = $parts[1];
-					}
-					else {
-						$port = '25565';
-					}
-					$s = new MCServerStatus($server, $port);
-					$status = ($s->online) ? '<span class="badge badge-success"><i class="icon-ok icon-white"></i></span>' : '<span class="badge badge-important"><i class="icon-remove icon-white"></i></span>';
-					$players = ($s->online_players) ? $s->online_players : 0 ;
-					$max_players = ($s->max_players) ? $s->max_players : 0 ;
-					echo "<tr>";
-					echo "<td>".$status."</td>";
-					echo "<td class='motd'>".$s->motd." <code>".$server."</code></td>";
-					echo "<td>".$players."/".$max_players."</td>";
-					echo "</tr>";
-				}
-			?>
-
-		</tbody>
-	</table>
-</div>
-
-<p>This page is using PHP to check if Minecraft servers are online and query their listing information. <a href="http://www.webmaster-source.com/?p=4730">Read more here.</a></p>
-
-
+<body>
+	<div class="container">
+		<div class="row" style="margin:15px 0;">
+			<h1>JoelLarson's Basic Minecraft PHP-SDK</h1>
+			<p>This is a basic implementation of reading Minecraft server meta based on the work of redwallhp.</p>
+		</div>
+		<div class="row">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="status">Status</th>
+						<th class="motd">Server</th>
+						<th>Players</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach($servers as $server): ?>
+					<?php $stats = \Minecraft\Stats::retrieve(new \Minecraft\Server($server)); ?>
+					<tr>
+						<td>
+							<?php if($stats->is_online): ?>
+							<span class="badge badge-success"><i class="icon-ok icon-white"></i></span>
+							<?php else: ?>
+							<span class="badge badge-important"><i class="icon-remove icon-white"></i></span>
+							<?php endif; ?>
+						</td>
+						<td class="motd"><?php echo $stats->motd; ?> <code><?php echo $server; ?></code></td>
+						<td><?php printf('%u/%u', $stats->online_players, $stats->max_players); ?></td>
+					</tr>
+					<?php unset($stats); ?>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+		<div class="row">
+			<p>This page is using PHP to check if Minecraft servers are online and query their listing information. <a href="http://www.webmaster-source.com/?p=4730">Read more about redwallhp's implementation here.</a></p>
+		</div>
+	</div>
 </body>
 </html>
