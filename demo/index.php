@@ -1,7 +1,7 @@
 <?php
 
 // Autoloader. Use SPL in a real project.
-foreach(array('Server', 'Stats', 'StatsException') as $file) {
+foreach(array('Server', 'Stats') as $file) {
 	include sprintf('../MCServerStatus/Minecraft/%s.php', $file);
 }
 

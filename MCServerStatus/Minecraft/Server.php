@@ -10,23 +10,29 @@ class Server {
 
 
 	public function __construct($hostname = '127.0.0.1', $port = 25565) {
-
-		// Overload for hostname:port syntax.
-		if(stristr(':', $hostname)) {
-			list($hostname, $port) = explode(':', $hostname);
-		}
-
-		$this->setHostname($hostname);
 		$this->setPort($port);
-
+		$this->setHostname($hostname);
 	}
 
-
+	
+	/**
+	 * Must be IP or domain. (only IPv4)
+	 */
 	public function setHostname($hostname) {
-		// If hostname doesn't resolve, throw error.
-		// Must be IP or domain. (only IPv4)
-		$this->hostname = $hostname;
-		return $this;
+		
+		// Overload for hostname:port syntax.
+		if( preg_match('/:\d+$/', $hostname) ) {
+			
+			// if protocol (e.g., 'http') was included; strip it out
+			if( preg_match('/:\/\//', $hostname) ) {
+				list($protocol, $this->hostname, $this->port) = explode(':', str_replace('//', '', $hostname));
+			} else {
+				list($this->hostname, $this->port) = explode(':', $hostname);
+			}
+			
+		} else {
+			$this->hostname = $hostname;
+		}
 	}
 
 
@@ -39,9 +45,9 @@ class Server {
 
 		if(is_int($port)) {
 			$this->port = $port;
+		} else if( is_numeric($port) ) {
+			$this->port = intval($port);
 		}
-
-		return $this;
 	}
 
 
