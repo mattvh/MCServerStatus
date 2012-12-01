@@ -8,23 +8,20 @@ class Stats {
 	public static function retrieve( \Minecraft\Server $server ) {
 
 		$socket = stream_socket_client(sprintf('tcp://%s:%u', $server->getHostname(), $server->getPort()), $errno, $errstr, 1);
-
-		if (!$socket) {
-			$stats->is_online = false;
+		
+		$stats = new \stdClass;
+		$stats->is_online = false;
+		
+		if (!$socket)
 			return $stats;
-		}
 
 		fwrite($socket, "\xfe\x01");
 		$data = fread($socket, 1024);
 		fclose($socket);
 
-		$stats = new \stdClass;
-
 		// Is this a disconnect with the ping?
-		if($data == false AND substr($data, 0, 1) != "\xFF") {
-			$stats->is_online = false;
+		if($data == false AND substr($data, 0, 1) != "\xFF") 
 			return $stats;
-		}
 
 		$data = substr($data, 9);
 		$data = mb_convert_encoding($data, 'auto', 'UCS-2');
