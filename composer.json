@@ -1,0 +1,16 @@
+{
+    "name": "redwallhp/mc-server-status",
+    "description": "Query Minecraft servers for the online players, message of the day, and whether they're online or not.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "redwallhp",
+            "email": "unknown@example.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+          "Minecraft\\": "MCServerStatus/"
+        }
+    }
+}
