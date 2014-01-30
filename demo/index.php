@@ -1,7 +1,7 @@
 <?php
 
 // Autoloader. Use SPL in a real project.
-foreach(array('Server', 'Stats', 'StatsException') as $file) {
+foreach(array('Server', 'Stats', 'StatsException', 'Formatting') as $file) {
 	include sprintf('../MCServerStatus/Minecraft/%s.php', $file);
 }
 
@@ -51,7 +51,7 @@ $servers = array(
 							<span class="badge badge-important"><i class="icon-remove icon-white"></i></span>
 							<?php endif; ?>
 						</td>
-						<td class="motd"><?php echo $stats->motd; ?> <code><?php echo $server; ?></code></td>
+						<td class="motd"><?php echo \Minecraft\Formatting::formatText($stats->motd); ?> <code><?php echo $server; ?></code></td>
 						<td><?php printf('%u/%u', $stats->online_players, $stats->max_players); ?></td>
 					</tr>
 					<?php unset($stats); ?>
