@@ -157,6 +157,12 @@ class Formatting
 				$result .= $char;
 			}
 		}
+		if ($inStyle)
+		{
+			// Close previos styling
+			$result .= Formatting::formatEnd();
+			$inStyle = false;
+		}
 
 		return $result;
 	}
